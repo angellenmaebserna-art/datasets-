@@ -575,19 +575,20 @@ elif menu == "🔮 Predictions":
                     st.pyplot(fig)
 
 
-                # 🌿 Feature importance (works for regression only)
-                if task_type == "Regression":
+                    # 🌿 Feature Importance (for both Regression & Classification)
                     st.subheader("🌿 Feature Importance")
-                try:
-                    # choose rf object depending on mode
-                    rf_obj = rf if task_type == "Regression only" else rf_clf
-                    importances = pd.DataFrame(
-                        {"Feature": features.columns, "Importance": rf_obj.feature_importances_}
-                    ).sort_values("Importance", ascending=False)
 
-                    fig, ax = plt.subplots(figsize=(7, max(3, 0.5 * len(importances))))
-                    sns.barplot(x="Importance", y="Feature", data=importances, ax=ax)
-                    st.pyplot(fig)
+                    try:
+                        rf_obj = rf if task_type == "Regression" else rf_clf  # detect which model is active
+                        importances = pd.DataFrame(
+                            {"Feature": features.columns, "Importance": rf_obj.feature_importances_}
+                        ).sort_values("Importance", ascending=False)
+
+                        fig, ax = plt.subplots(figsize=(7, max(3, 0.5 * len(importances))))
+                        sns.barplot(x="Importance", y="Feature", data=importances, ax=ax)
+                        st.pyplot(fig)
+                    except Exception as e:
+                        st.warning(f"Could not plot feature importances: {e}")
 
                     # Predictive microplastic levels — regression only (simulated)
                     if task_type == "Regression":
